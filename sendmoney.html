@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Enviar Dinero - Digital Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <h2>Enviar Dinero</h2>
+                
+                <input type="text" id="searchContact" class="form-control my-3" placeholder="Buscar por nombre o alias...">
+
+                <div id="contactList" class="list-group mb-3" style="max-height: 200px; overflow-y: auto;">
+                    </div>
+
+                <div id="sendActions" class="d-none">
+                    <input type="number" id="sendAmount" class="form-control mb-2" placeholder="Monto a enviar">
+                    <button id="btnConfirmSend" class="btn btn-primary w-100">Enviar Dinero</button>
+                </div>
+
+                <hr>
+                <button id="btnToggleAdd" class="btn btn-outline-dark w-100">Agregar nuevo contacto</button>
+
+                <div id="formAddContact" class="mt-3 d-none border p-3 rounded">
+                    <h5>Nuevo Contacto</h5>
+                    <input type="text" id="newName" class="form-control mb-2" placeholder="Nombre y Apellido">
+                    <input type="text" id="newCBU" class="form-control mb-2" placeholder="CBU (8 dígitos)">
+                    <input type="text" id="newAlias" class="form-control mb-2" placeholder="Alias">
+                    <input type="text" id="newBank" class="form-control mb-2" placeholder="Banco">
+                    <button id="btnSaveContact" class="btn btn-success btn-sm">Guardar</button>
+                    <button id="btnCancelAdd" class="btn btn-link btn-sm text-danger">Cancelar</button>
+                </div>
+                
+                <div id="finalMessage" class="mt-3 text-center text-success fw-bold"></div>
+                <div class="text-center mt-3"><a href="menu.html">Volver al menú</a></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let selectedContact = null;
+
+            function renderContacts() {
+                const contacts = JSON.parse(localStorage.getItem('wallet_contactos'));
+                $('#contactList').empty();
+                contacts.forEach((c, i) => {
+                    $('#contactList').append(`
+                        <button class="list-group-item list-group-item-action contact-item" data-index="${i}">
+                            <strong>${c.nombre}</strong> <small>(${c.alias})</small>
+                        </button>
+                    `);
+                });
+            }
+
+            // Mostrar/Ocultar formulario
+            $('#btnToggleAdd').click(() => $('#formAddContact').removeClass('d-none'));
+            $('#btnCancelAdd').click(() => $('#formAddContact').addClass('d-none'));
+
+            // Validar y Guardar
+            $('#btnSaveContact').click(function() {
+                const name = $('#newName').val();
+                const cbu = $('#newCBU').val();
+                if (name === "" || cbu.length !== 8) {
+                    alert("Complete los campos. El CBU debe tener 8 dígitos.");
+                    return;
+                }
+                const contacts = JSON.parse(localStorage.getItem('wallet_contactos'));
+                contacts.push({ nombre: name, cbu: cbu, alias: $('#newAlias').val(), banco: $('#newBank').val() });
+                localStorage.setItem('wallet_contactos', JSON.stringify(contacts));
+                $('#formAddContact').addClass('d-none');
+                renderContacts();
+            });
+
+            // Selección de contacto
+            $(document).on('click', '.contact-item', function() {
+                $('.contact-item').removeClass('active');
+                $(this).addClass('active');
+                selectedContact = JSON.parse(localStorage.getItem('wallet_contactos'))[$(this).data('index')];
+                $('#sendActions').removeClass('d-none');
+            });
+
+            // Buscador
+            $('#searchContact').on('keyup', function() {
+                const val = $(this).val().toLowerCase();
+                $(".contact-item").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1)
+                });
+            });
+
+            // Enviar Dinero
+            $('#btnConfirmSend').click(function() {
+                const monto = parseFloat($('#sendAmount').val());
+                const saldo = parseFloat(localStorage.getItem('wallet_saldo'));
+                if (monto > saldo) { alert("Saldo insuficiente"); return; }
+
+                localStorage.setItem('wallet_saldo', saldo - monto);
+                let movs = JSON.parse(localStorage.getItem('wallet_movimientos'));
+                movs.unshift({ tipo: 'transferencia enviada', monto: -monto, detalle: selectedContact.nombre, fecha: new Date().toLocaleString() });
+                localStorage.setItem('wallet_movimientos', JSON.stringify(movs));
+
+                $('#finalMessage').text('¡Envío realizado con éxito a ' + selectedContact.nombre + '!');
+                setTimeout(() => window.location.href = 'menu.html', 2000);
+            });
+
+            renderContacts();
+        });
+    </script>
+</body>
+</html>

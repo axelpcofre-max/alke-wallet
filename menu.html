@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal - Digital Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-5 text-center">
+        <h2 class="mb-4">Menú Principal</h2>
+        
+        <div class="card shadow mx-auto mb-4" style="max-width: 400px;">
+            <div class="card-body">
+                <p class="text-muted mb-1">Saldo Actual</p>
+                <h3 class="fw-bold text-primary" id="displaySaldo">$0.00</h3>
+            </div>
+        </div>
+
+        <p id="legend" class="text-secondary fw-bold" style="height: 24px;"></p>
+
+        <div class="d-grid gap-3 col-md-5 mx-auto">
+            <button id="goToDeposit" class="btn btn-outline-success btn-lg">Depositar</button>
+            <button id="goToSend" class="btn btn-outline-primary btn-lg">Enviar Dinero</button>
+            <button id="goToTrans" class="btn btn-outline-secondary btn-lg">Últimos Movimientos</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // --- 1. Lógica de Seguridad del Saldo ---
+            let saldoRaw = localStorage.getItem('wallet_saldo');
+            let saldo = parseFloat(saldoRaw);
+
+            // Si el saldo no existe, es nulo o es NaN, lo reseteamos a 0 por seguridad
+            if (isNaN(saldo) || saldo === null) {
+                saldo = 0;
+                localStorage.setItem('wallet_saldo', '0');
+            }
+
+            // Mostramos el saldo ya validado
+            $('#displaySaldo').text('$' + saldo.toLocaleString());
+
+            // --- 2. Lógica de Navegación ---
+            function redirigir(url, nombre) {
+                $('#legend').text('Redirigiendo a ' + nombre + '...');
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 800);
+            }
+
+            // Eventos de los botones utilizando jQuery
+            $('#goToDeposit').click(() => redirigir('deposit.html', 'Depósito'));
+            $('#goToSend').click(() => redirigir('sendmoney.html', 'Enviar Dinero'));
+            $('#goToTrans').click(() => redirigir('transactions.html', 'Últimos Movimientos'));
+        });
+    </script>
+</body>
+</html>

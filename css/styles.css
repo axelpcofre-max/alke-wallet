@@ -1,0 +1,77 @@
+/* --- styles.css --- */
+/*body { background-color: red !important; }
+/* 1. Definición de Variables (Tu Paleta Azul) */
+:root {
+    /* Azul profundo, sobrio para elementos principales */
+    --wallet-blue-dark: #2c4f7c; 
+    /* Azul medio con tono grisáceo para interacciones */
+    --wallet-blue-medium: #4a76a8;
+    /* Fondo muy pálido con tinte azulado, "cool" */
+    --wallet-bg-cool: #eef2f6; 
+    /* Sombra azulada sutil */
+    --wallet-shadow-blue: rgba(44, 79, 124, 0.15);
+}
+
+/* 2. Aplicar al Fondo General */
+body.bg-light {
+    /* Sobrescribe el fondo gris claro de Bootstrap por tu tono "cool" */
+    background-color: var(--wallet-bg-cool) !important;
+    color: #334155; /* Un texto gris oscuro, menos duro que el negro puro */
+}
+
+/* 3. Personalizar Títulos */
+h2, h3, h5, .fw-bold.text-primary {
+    /* Los títulos ahora usan tu azul oscuro */
+    color: var(--wallet-blue-dark) !important;
+}
+
+/* 4. Personalizar las Tarjetas (Cards) */
+.card.shadow, .card.shadow-sm {
+    border: none; /* Quitamos bordes grises */
+    /* Usamos tu sombra azulada en lugar de la gris de Bootstrap */
+    box-shadow: 0 0.5rem 1rem var(--wallet-shadow-blue) !important;
+}
+
+/* 5. Personalizar Botones Primarios (El azul principal) */
+.btn-primary {
+    background-color: var(--wallet-blue-dark);
+    border-color: var(--wallet-blue-dark);
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    background-color: var(--wallet-blue-medium);
+    border-color: var(--wallet-blue-medium);
+}
+
+/* 6. Personalizar Botones Outline (Los del menú) */
+.btn-outline-primary {
+    color: var(--wallet-blue-dark);
+    border-color: var(--wallet-blue-dark);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--wallet-blue-dark);
+    border-color: var(--wallet-blue-dark);
+}
+
+/* Opcional: Personalizar los otros botones del menú para que sean monocromáticos */
+.btn-outline-success { /* El de depositar ahora será un tono azulado */
+     color: #2d6a4f; /* Un verde azulado más sobrio */
+     border-color: #2d6a4f;
+}
+.btn-outline-secondary { /* El de movimientos */
+    color: var(--wallet-blue-medium);
+    border-color: var(--wallet-blue-medium);
+}
+
+/* 7. Personalizar Listas y Elementos Activos (Agenda y Movimientos) */
+.list-group-item.active {
+    background-color: var(--wallet-blue-dark);
+    border-color: var(--wallet-blue-dark);
+}
+
+.form-control:focus, .form-select:focus {
+    /* El resplandor al hacer clic en un input */
+    border-color: var(--wallet-blue-medium);
+    box-shadow: 0 0 0 0.25rem rgba(74, 118, 168, 0.25);
+}
